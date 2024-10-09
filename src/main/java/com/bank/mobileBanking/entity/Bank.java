@@ -3,6 +3,7 @@ package com.bank.mobileBanking.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "bank_tbl")
 public class Bank {
