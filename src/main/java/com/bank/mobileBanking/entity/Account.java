@@ -13,15 +13,16 @@ public class Account {
     @Column(name = "account_holder_name",nullable = false)
     private String accountHolderName;
 
-    @Column(name = "account_number",nullable = true)
+    @Column(name = "account_number")
     private Long accountNumber;
 
-    @Column(name = "bank_balance",nullable = true)
+    @Column(name = "bank_balance")
     private Double balance;
 
     @Column(name = "security_pin",nullable = false)
     private Long pin;
 
     @OneToOne
+    @JoinColumn(name = "bank_name")
     private Bank bank;
 }
