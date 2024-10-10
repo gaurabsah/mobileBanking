@@ -13,4 +13,6 @@ public interface BankService {
     Map<String,Object> getAllBanks();
 
     Map<String, Object> saveBankDetail(BankDTO bankDTO);
+
+    Map<String,Object> getBankByNameAndIFSC(String bankName,String ifsc);
 }

@@ -32,4 +32,16 @@ public class User {
 
     @Column(name = "pan_card_number",nullable = false)
     private String pan;
+
+    @Column(name = "address",nullable = false)
+    private String address;
+
+    @Column(name = "pin_code",nullable = false)
+    private String pinCode;
+
+    @Column(name = "state",nullable = false)
+    private String state;
+
+    @Column(name = "country",nullable = false)
+    private String country;
 }

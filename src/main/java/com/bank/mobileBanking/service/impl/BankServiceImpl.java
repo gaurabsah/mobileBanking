@@ -61,5 +61,18 @@ public class BankServiceImpl implements BankService {
         return responseMap;
     }
 
+    @Override
+    public Map<String, Object> getBankByNameAndIFSC(String bankName, String ifsc) {
+        Map<String, Object> responseMap = new HashMap<>();
+        BankDTO bankDetail = new BankDTO();
+
+        if(null != ifsc && !ifsc.isEmpty() && null != bankName && !bankName.isEmpty()){
+            bankDetail = bankDAO.getBankByNameAndIFSC(bankName,ifsc);
+        }
+
+        responseMap.put("bankDetail",bankDetail);
+        return responseMap;
+    }
+
 
 }

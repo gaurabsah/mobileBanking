@@ -95,4 +95,26 @@ public class BankDAOImpl implements BankDAO {
             return bankDTO;
         });
     }
+
+    @Override
+    public BankDTO getBankByNameAndIFSC(String bankName, String ifsc) {
+        return jdbcTemplate.query(BankConstant.GET_BANK_DETAIL_BY_NAME_AND_IFSC, new Object[]{bankName,ifsc}, rs -> {
+            BankDTO bankDTO = new BankDTO();
+            try {
+                if (rs.next()) {
+                    Bank bank = new Bank();
+                    bank.setBankName(rs.getString("bank_name"));
+                    bank.setBranch(rs.getString("branch"));
+                    bank.setIfsc(rs.getString("ifsc_code"));
+                    bankDTO = modelMapper.map(bank, BankDTO.class);
+                    return bankDTO;
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                log.error("Error in getting Bank Details :: {}", e.getMessage());
+            }
+            return bankDTO;
+        });
+    }
 }

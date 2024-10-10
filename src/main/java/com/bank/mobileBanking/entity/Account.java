@@ -1,7 +1,10 @@
 package com.bank.mobileBanking.entity;
 
+import com.bank.mobileBanking.entity.enums.AccountType;
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "account_tbl")
 public class Account {
@@ -16,6 +19,10 @@ public class Account {
     @Column(name = "account_number")
     private Long accountNumber;
 
+    @Column(name = "account_type")
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+
     @Column(name = "bank_balance")
     private Double balance;
 
@@ -23,6 +30,5 @@ public class Account {
     private Long pin;
 
     @OneToOne
-    @JoinColumn(name = "bank_name")
     private Bank bank;
 }

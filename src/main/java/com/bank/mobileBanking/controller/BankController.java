@@ -33,4 +33,9 @@ public class BankController {
     public Map<String,Object> saveBankDetail(@RequestBody BankDTO bankDTO){
         return bankService.saveBankDetail(bankDTO);
     }
+
+    @GetMapping("/getBankByNameAndIFSC")
+    public Map<String, Object> getBankByNameAndIFSC(@RequestParam String bankName, @RequestParam String ifsc){
+        return bankService.getBankByNameAndIFSC(bankName,ifsc);
+    }
 }

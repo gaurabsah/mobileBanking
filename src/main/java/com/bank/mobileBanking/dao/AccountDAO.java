@@ -6,10 +6,10 @@ public interface AccountDAO {
 
     void createAccount(AccountDTO accountDTO);
 
-    double getBalance(Long accountNumber);
+    AccountDTO getBalance(Long accountNumber);
 
     AccountDTO getAccount(Long accountNumber);
 
-
+    Long getSecurityPin(Long accountNumber);
 
 }

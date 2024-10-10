@@ -13,4 +13,6 @@ public interface BankDAO {
     BankDTO getBankByBankName(String bankName);
 
     BankDTO getBankByIFSC(String ifsc);
+
+    BankDTO getBankByNameAndIFSC(String bankName,String ifsc);
 }
