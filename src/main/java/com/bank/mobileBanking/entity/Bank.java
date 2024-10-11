@@ -3,6 +3,9 @@ package com.bank.mobileBanking.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "bank_tbl")
@@ -20,5 +23,8 @@ public class Bank {
 
     @Column(name = "ifsc_code",nullable = false)
     private String ifsc;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bank", orphanRemoval = true)
+    private List<Account> petList = new ArrayList<>();
 
 }

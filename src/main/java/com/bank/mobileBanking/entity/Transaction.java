@@ -1,7 +1,9 @@
 package com.bank.mobileBanking.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "txn_tbl")
 public class Transaction {
@@ -16,6 +18,9 @@ public class Transaction {
     @Column(name = "txn_amount",nullable = false)
     private Double amount;
 
-    @Column(name = "paid_to",nullable = false)
-    private String paidTo;
+    @Column(name = "sender_account_number",nullable = false)
+    private Long senderAccountNumber;
+
+    @Column(name = "receiver_account_number",nullable = false)
+    private Long receiverAccountNumber;
 }

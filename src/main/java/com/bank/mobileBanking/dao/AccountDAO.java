@@ -12,4 +12,5 @@ public interface AccountDAO {
 
     Long getSecurityPin(Long accountNumber);
 
+    void updateAccountBalance(AccountDTO senderAccount);
 }

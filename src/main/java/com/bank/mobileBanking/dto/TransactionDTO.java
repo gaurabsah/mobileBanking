@@ -15,5 +15,7 @@ public class TransactionDTO {
 
     private Double amount;
 
-    private String paidTo;
+    private Long senderAccountNumber;
+
+    private Long receiverAccountNumber;
 }

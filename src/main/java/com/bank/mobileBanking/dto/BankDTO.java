@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,4 +18,6 @@ public class BankDTO {
     private String branch;
 
     private String ifsc;
+
+    private List<AccountDTO> accountDTOList;
 }

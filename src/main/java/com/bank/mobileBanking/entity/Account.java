@@ -29,6 +29,8 @@ public class Account {
     @Column(name = "security_pin",nullable = false)
     private Long pin;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "bank_id", referencedColumnName = "id", nullable = false)
     private Bank bank;
+
 }

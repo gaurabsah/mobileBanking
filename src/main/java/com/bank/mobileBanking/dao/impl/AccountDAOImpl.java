@@ -148,4 +148,10 @@ public class AccountDAOImpl implements AccountDAO {
             return accountDTO.getPin();
         });
     }
+
+    @Override
+    public void updateAccountBalance(AccountDTO senderAccount) {
+        jdbcTemplate.update(AccountConstant.UPDATE_ACCOUNT_BALANCE, senderAccount.getBalance(), senderAccount.getAccountNumber());
+    }
+
 }

@@ -10,4 +10,5 @@ public class AccountConstant {
             "FROM account_tbl a\n" +
             "JOIN bank_tbl b ON a.bank_id = b.id\n" +
             "WHERE a.account_number = ?";
+    public static final String UPDATE_ACCOUNT_BALANCE = "UPDATE account_tbl SET bank_balance = ? WHERE account_number = ?";
 }
