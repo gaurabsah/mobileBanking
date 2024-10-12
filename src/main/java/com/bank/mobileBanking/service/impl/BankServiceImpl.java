@@ -2,6 +2,8 @@ package com.bank.mobileBanking.service.impl;
 
 import com.bank.mobileBanking.dao.BankDAO;
 import com.bank.mobileBanking.dto.BankDTO;
+import com.bank.mobileBanking.exception.ResourcesAlreadyExistsException;
+import com.bank.mobileBanking.exception.ResourcesNotFoundException;
 import com.bank.mobileBanking.service.BankService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,20 @@ public class BankServiceImpl implements BankService {
     @Override
     public Map<String, Object> saveBankDetail(BankDTO bankDTO) {
         Map<String, Object> responseMap = new HashMap<>();
+        if (bankDTO == null) {
+            throw new ResourcesNotFoundException("Bank can not be null");
+        }
+
+//      Check for duplicate bank
+        BankDTO existingBank = bankDAO.getBankByNameAndBranch(bankDTO.getBankName(), bankDTO.getBranch());
+
+        if (existingBank != null) {
+            if (existingBank.getBankName().equalsIgnoreCase(bankDTO.getBankName()) &&
+                    existingBank.getBranch().equalsIgnoreCase(bankDTO.getBranch())) {
+                throw new ResourcesAlreadyExistsException("Bank with name and branch already exists");
+            }
+        }
+
         bankDAO.createBank(bankDTO);
         responseMap.put("success", "Bank Details saved successfully");
         return responseMap;

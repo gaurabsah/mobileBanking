@@ -1,5 +1,6 @@
 package com.bank.mobileBanking.dto;
 
+import com.bank.mobileBanking.entity.enums.ServiceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +18,15 @@ public class TransactionDTO {
 
     private Double amount;
 
-    private Long senderAccountNumber;
+    private String senderAccountNumber;
 
-    private Long receiverAccountNumber;
+    private String receiverAccountNumber;
 
     private LocalDateTime time;
+
+    private ServiceType service;
+
+    private Double gst;
+
+    private Double commission;
 }

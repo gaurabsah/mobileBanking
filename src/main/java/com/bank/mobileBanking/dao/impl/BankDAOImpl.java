@@ -117,4 +117,49 @@ public class BankDAOImpl implements BankDAO {
             return bankDTO;
         });
     }
+
+    @Override
+    public Bank getBankByBranch(String branch) {
+        log.info("inside getBankByBranch()::BankDAOImpl");
+        return jdbcTemplate.query(BankConstant.GET_BANK_DETAIL_BY_BRANCH, new Object[]{"%" + branch + "%"}, rs -> {
+            Bank bank = new Bank();
+            try {
+                if (rs.next()) {
+                    bank.setId(rs.getInt("id"));
+                    bank.setBankName(rs.getString("bank_name"));
+                    bank.setBranch(rs.getString("branch"));
+                    bank.setIfsc(rs.getString("ifsc_code"));
+                    return bank;
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                log.error("Error in getting Bank Details :: {}", e.getMessage());
+            }
+            return bank;
+        });
+    }
+
+    @Override
+    public BankDTO getBankByNameAndBranch(String bankName, String branch) {
+        return jdbcTemplate.query(BankConstant.GET_BANK_DETAIL_BY_NAME_AND_BRANCH, new Object[]{bankName, branch}, rs -> {
+            BankDTO bankDTO = new BankDTO();
+            try {
+                if (rs.next()) {
+                    Bank bank = new Bank();
+                    bank.setId(rs.getInt("id"));
+                    bank.setBankName(rs.getString("bank_name"));
+                    bank.setBranch(rs.getString("branch"));
+                    bank.setIfsc(rs.getString("ifsc_code"));
+                    bankDTO = modelMapper.map(bank, BankDTO.class);
+                    return bankDTO;
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                log.error("Error in getting Bank Details :: {}", e.getMessage());
+            }
+            return bankDTO;
+        });
+    }
 }

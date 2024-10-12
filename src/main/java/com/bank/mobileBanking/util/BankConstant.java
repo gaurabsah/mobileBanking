@@ -10,4 +10,6 @@ public class BankConstant {
     public static final String GET_BANK_DETAIL_BY_NAME_AND_IFSC = "SELECT * from bank_tbl WHERE bank_name = ? AND ifsc_code = ?";
 
     public static final String GET_BANK_ID = "SELECT id FROM bank_tbl WHERE bank_name = ? AND ifsc_code = ?";
+    public static final String GET_BANK_DETAIL_BY_BRANCH = "SELECT * FROM bank_tbl WHERE branch like ?";
+    public static final String GET_BANK_DETAIL_BY_NAME_AND_BRANCH = "SELECT * from bank_tbl WHERE bank_name = ? AND branch = ?";
 }

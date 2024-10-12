@@ -1,9 +1,11 @@
 package com.bank.mobileBanking.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 
+@Data
 @Entity
 @Table(name = "user_tbl")
 public class User {
@@ -20,9 +22,6 @@ public class User {
 
     @Column(name = "email", nullable = false)
     private String email;
-
-    @Column(name = "password", nullable = false)
-    private String password;
 
     @Column(name = "DOB", nullable = false)
     private LocalDate dob;
@@ -44,4 +43,7 @@ public class User {
 
     @Column(name = "country", nullable = false)
     private String country;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    private Account account;
 }

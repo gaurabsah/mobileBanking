@@ -13,11 +13,8 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "account_holder_name", nullable = false)
-    private String accountHolderName;
-
     @Column(name = "account_number")
-    private Long accountNumber;
+    private String accountNumber;
 
     @Column(name = "account_type")
     @Enumerated(EnumType.STRING)
@@ -32,5 +29,9 @@ public class Account {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "bank_id", referencedColumnName = "id", nullable = false)
     private Bank bank;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
 
 }

@@ -10,5 +10,5 @@ public interface TransactionService {
 
     Map<String,Object> getTransaction(String txnId,Long sPin);
 
-    Map<String,Object> getTransactionHistory(Long accountNumber, Long sPin);
+    Map<String,Object> getTransactionHistory(String accountNumber, Long sPin);
 }

@@ -1,16 +1,17 @@
 package com.bank.mobileBanking.dao;
 
 import com.bank.mobileBanking.dto.AccountDTO;
+import com.bank.mobileBanking.dto.UserDTO;
 
 public interface AccountDAO {
 
-    void createAccount(AccountDTO accountDTO);
+    void createAccount(UserDTO userDTO, AccountDTO accountDTO);
 
-    AccountDTO getBalance(Long accountNumber);
+    AccountDTO getBalance(String accountNumber);
 
-    AccountDTO getAccount(Long accountNumber);
+    AccountDTO getAccount(String accountNumber);
 
-    Long getSecurityPin(Long accountNumber);
+    Long getSecurityPin(String accountNumber);
 
     void updateAccountBalance(AccountDTO senderAccount);
 }

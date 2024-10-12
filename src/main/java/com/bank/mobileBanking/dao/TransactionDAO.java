@@ -10,5 +10,5 @@ public interface TransactionDAO {
 
     TransactionDTO getTransaction(String txnId);
 
-    List<TransactionDTO> txnHistory(Long accountNumber);
+    List<TransactionDTO> txnHistory(String accountNumber);
 }

@@ -4,6 +4,8 @@ import com.bank.mobileBanking.dao.TransactionDAO;
 import com.bank.mobileBanking.dao.helper.TransactionDAOHelper;
 import com.bank.mobileBanking.dto.TransactionDTO;
 import com.bank.mobileBanking.entity.Transaction;
+import com.bank.mobileBanking.entity.enums.AccountType;
+import com.bank.mobileBanking.entity.enums.ServiceType;
 import com.bank.mobileBanking.exception.ResourcesNotFoundException;
 import com.bank.mobileBanking.exception.TransactionDateTimeNotFoundException;
 import com.bank.mobileBanking.util.TransactionConstant;
@@ -35,17 +37,32 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public void transferMoney(TransactionDTO transactionDTO) {
         String transactionId = UUID.randomUUID().toString();
+
         LocalDateTime transactionTime = transactionDTO.getTime();
         if (transactionTime == null) {
             transactionTime = LocalDateTime.now();
         }
+
+        Double gst = transactionDTO.getGst();
+        if (gst == null) {
+            gst = 0.0;
+        }
+
+        Double commission = transactionDTO.getCommission();
+        if (commission == null) {
+            commission = 0.0;
+        }
+
         try {
             jdbcTemplate.update(TransactionConstant.TRANSFER_MONEY,
                     transactionId,
                     transactionDTO.getAmount(),
                     transactionDTO.getSenderAccountNumber(),
                     transactionDTO.getReceiverAccountNumber(),
-                    transactionTime
+                    transactionTime,
+                    transactionDTO.getService().toString(),
+                    gst,
+                    commission
             );
         } catch (Exception e) {
             log.error("Error while sending money: {}", e.getMessage());
@@ -62,14 +79,23 @@ public class TransactionDAOImpl implements TransactionDAO {
                     Transaction transaction = new Transaction();
                     transaction.setAmount(rs.getDouble("txn_amount"));
                     transaction.setTxnId(rs.getString("txn_id"));
-                    transaction.setSenderAccountNumber(rs.getLong("sender_account_number"));
-                    transaction.setReceiverAccountNumber(rs.getLong("receiver_account_number"));
+                    transaction.setSenderAccountNumber(rs.getString("sender_account_number"));
+                    transaction.setReceiverAccountNumber(rs.getString("receiver_account_number"));
 
                     LocalDateTime time = transactionDAOHelper.getTransactionTime(txnId);
                     if (time == null) {
                         throw new TransactionDateTimeNotFoundException("TXN Date not found");
                     }
+
                     transaction.setTime(time);
+
+                    // Convert string to AccountType enum
+                    String service = rs.getString("service");
+                    ServiceType serviceType = ServiceType.valueOf(service);
+                    transaction.setService(serviceType);
+
+                    transaction.setGst(rs.getDouble("gst"));
+                    transaction.setCommission(rs.getDouble("commission"));
 
                     transactionDTO = modelMapper.map(transaction, TransactionDTO.class);
                     return transactionDTO;
@@ -84,15 +110,15 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public List<TransactionDTO> txnHistory(Long accountNumber) {
+    public List<TransactionDTO> txnHistory(String accountNumber) {
         return jdbcTemplate.query(TransactionConstant.GET_ALL_TXN_DETAILS, new Object[]{accountNumber}, rs -> {
             List<Transaction> transactionList = new ArrayList<>();
 
             try {
                 while (rs.next()) {
                     Transaction txn = new Transaction();
-                    txn.setReceiverAccountNumber(rs.getLong("receiver_account_number"));
-                    txn.setSenderAccountNumber(rs.getLong("sender_account_number"));
+                    txn.setReceiverAccountNumber(rs.getString("receiver_account_number"));
+                    txn.setSenderAccountNumber(rs.getString("sender_account_number"));
                     txn.setAmount(rs.getDouble("txn_amount"));
                     txn.setTxnId(rs.getString("txn_id"));
 
@@ -101,6 +127,14 @@ public class TransactionDAOImpl implements TransactionDAO {
                         throw new TransactionDateTimeNotFoundException("TXN Date not found for txnId: " + txn.getTxnId());
                     }
                     txn.setTime(time);
+
+                    // Convert string to ServiceType enum
+                    String service = rs.getString("service");
+                    ServiceType serviceType = ServiceType.valueOf(service);
+                    txn.setService(serviceType);
+
+                    txn.setGst(rs.getDouble("gst"));
+                    txn.setCommission(rs.getDouble("commission"));
 
                     transactionList.add(txn);
                 }

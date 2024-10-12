@@ -25,6 +25,6 @@ public class Bank {
     private String ifsc;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bank", orphanRemoval = true)
-    private List<Account> petList = new ArrayList<>();
+    private List<Account> accountList = new ArrayList<>();
 
 }

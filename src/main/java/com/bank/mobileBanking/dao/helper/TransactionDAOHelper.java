@@ -17,8 +17,8 @@ public class TransactionDAOHelper {
         return jdbcTemplate.queryForObject(sql, new Object[]{txnId}, LocalDateTime.class);
     }
 
-    public Long getAccountNumberByTxnId(String txnId) {
+    public String getAccountNumberByTxnId(String txnId) {
         String sql = "SELECT sender_account_number FROM txn_tbl WHERE txn_id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{txnId}, Long.class);
+        return jdbcTemplate.queryForObject(sql, new Object[]{txnId}, String.class);
     }
 }

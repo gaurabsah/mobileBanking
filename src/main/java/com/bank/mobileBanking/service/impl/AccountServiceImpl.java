@@ -18,16 +18,16 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountDAO accountDAO;
 
-    @Override
-    public Map<String, Object> createAccount(AccountDTO accountDTO) {
-        Map<String, Object> responseMap = new HashMap<>();
-        accountDAO.createAccount(accountDTO);
-        responseMap.put("success", "Account created successfully");
-        return responseMap;
-    }
+//    @Override
+//    public Map<String, Object> createAccount(AccountDTO accountDTO) {
+//        Map<String, Object> responseMap = new HashMap<>();
+//        accountDAO.createAccount(accountDTO);
+//        responseMap.put("success", "Account created successfully");
+//        return responseMap;
+//    }
 
     @Override
-    public Map<String, Object> getBalance(Long accountNumber, Long sPin) {
+    public Map<String, Object> getBalance(String accountNumber, Long sPin) {
         Map<String, Object> responseMap = new HashMap<>();
         Long securityPin = accountDAO.getSecurityPin(accountNumber);
         if (!sPin.equals(securityPin)) {
@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Map<String, Object> getAccountDetail(Long accountNumber, Long sPin) {
+    public Map<String, Object> getAccountDetail(String accountNumber, Long sPin) {
         Map<String, Object> responseMap = new HashMap<>();
         Long securityPin = accountDAO.getSecurityPin(accountNumber);
         if (!sPin.equals(securityPin)) {

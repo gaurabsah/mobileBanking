@@ -12,9 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AccountDTO {
 
-    private String accountHolderName;
-
-    private Long accountNumber;
+    private String accountNumber;
 
     private AccountType accountType;
 
@@ -23,4 +21,6 @@ public class AccountDTO {
     private Long pin;
 
     private BankDTO bankDTO;
+
+    private UserDTO userDTO;
 }

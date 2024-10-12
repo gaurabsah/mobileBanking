@@ -29,7 +29,7 @@ public class TransactionController {
 
     @GetMapping("/paymentHistory")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<String,Object> paymentHistory(@RequestParam Long accountNumber, @RequestParam Long sPin){
+    public Map<String,Object> paymentHistory(@RequestParam String accountNumber, @RequestParam Long sPin){
         return transactionService.getTransactionHistory(accountNumber,sPin);
     }
 }

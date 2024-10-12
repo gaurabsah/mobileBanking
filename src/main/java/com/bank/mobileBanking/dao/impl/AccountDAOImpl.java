@@ -1,12 +1,17 @@
 package com.bank.mobileBanking.dao.impl;
 
 import com.bank.mobileBanking.dao.AccountDAO;
+import com.bank.mobileBanking.dao.BankDAO;
 import com.bank.mobileBanking.dao.helper.AccountDAOHelper;
 import com.bank.mobileBanking.dto.AccountDTO;
 import com.bank.mobileBanking.dto.BankDTO;
+import com.bank.mobileBanking.dto.UserDTO;
 import com.bank.mobileBanking.entity.Account;
+import com.bank.mobileBanking.entity.Bank;
+import com.bank.mobileBanking.entity.User;
 import com.bank.mobileBanking.entity.enums.AccountType;
 import com.bank.mobileBanking.exception.ResourcesNotFoundException;
+import com.bank.mobileBanking.exception.TransactionDateTimeNotFoundException;
 import com.bank.mobileBanking.util.AccountConstant;
 import com.bank.mobileBanking.util.BankConstant;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,39 +35,44 @@ public class AccountDAOImpl implements AccountDAO {
 
     private final AccountDAOHelper accountDAOHelper;
 
+    private final BankDAO bankDAO;
+
 
     @Override
-    public void createAccount(AccountDTO accountDTO) {
+    public void createAccount(UserDTO userDTO, AccountDTO accountDTO) {
         log.info("inside createAccount():");
-        // Check if bank information is valid
-        if (accountDTO.getBankDTO() == null) {
-            throw new IllegalArgumentException("Bank information is required.");
+
+        if (userDTO == null || (accountDTO.getPin() == null) || (accountDTO.getAccountType() == null)) {
+            throw new ResourcesNotFoundException("UserDTO and AccountDTO cannot be null.");
         }
 
-        String bankName = accountDTO.getBankDTO().getBankName();
-        log.info("Bank Name: {}", bankName);
+        String accountNumber = UUID.randomUUID().toString();
+        String address = userDTO.getAddress();
 
-        String bankIFSC = accountDTO.getBankDTO().getIfsc();
-        log.info("Bank IFSC Code: {}", bankIFSC);
-
-        // Check if the bank exists
-        BankDTO bankDTO = accountDAOHelper.getBankByNameAndIFSC(bankName, bankIFSC);
-        if (bankDTO == null) {
-            throw new ResourcesNotFoundException("Bank not found: " + bankName);
+        User user = modelMapper.map(userDTO, User.class);
+        // Fetch user ID and validate it
+        int userId = user.getId();
+        if (userId == 0) {
+            log.error("User ID: {}", 0);
+            throw new ResourcesNotFoundException("Valid User ID is required.");
         }
 
-        Integer bankId = jdbcTemplate.queryForObject(BankConstant.GET_BANK_ID, new Object[]{
-                bankName, bankIFSC
-        }, Integer.class);
+        log.info("checking for bank info");
+        Bank bank = bankDAO.getBankByBranch(address);
+        log.info("bank info: {}", bank);
+        if (bank == null || bank.getId() == 0) {
+            throw new ResourcesNotFoundException("Valid Bank Detail Not Found for branch: " + userDTO.getAddress());
+        }
 
         try {
-            jdbcTemplate.update(AccountConstant.INSERT_ACCOUNT_DETAIL, accountDTO.getAccountHolderName(),
-                    accountDTO.getAccountNumber(),
+            log.info("insert");
+            jdbcTemplate.update(AccountConstant.INSERT_ACCOUNT_DETAIL,
+                    accountNumber,
                     accountDTO.getAccountType().name(),
-                    accountDTO.getBalance(),
+                    0.0,
                     accountDTO.getPin(),
-                    bankId);
-            log.info("account detail: {}", accountDTO.toString());
+                    bank.getId(),
+                    userId);
         } catch (Exception e) {
             log.error("Error creating account: {}", e.getMessage());
             throw new RuntimeException("Unable to create account", e);
@@ -66,14 +80,13 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
-    public AccountDTO getBalance(Long accountNumber) {
+    public AccountDTO getBalance(String accountNumber) {
         return jdbcTemplate.query(AccountConstant.GET_ACCOUNT_BALANCE, new Object[]{accountNumber}, rs -> {
             AccountDTO accountDTO = new AccountDTO();
             try {
                 if (rs.next()) {
                     Account account = new Account();
-                    account.setAccountHolderName(rs.getString("account_holder_name"));
-                    account.setAccountNumber(rs.getLong("account_number"));
+                    account.setAccountNumber(rs.getString("account_number"));
 
                     // Convert string to AccountType enum
                     String accountTypeString = rs.getString("account_type");
@@ -94,13 +107,12 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
-    public AccountDTO getAccount(Long accountNumber) {
+    public AccountDTO getAccount(String accountNumber) {
         return jdbcTemplate.query(AccountConstant.GET_ACCOUNT_DETAIL, new Object[]{accountNumber}, rs -> {
             AccountDTO accountDTO = new AccountDTO();
             try {
                 if (rs.next()) {
-                    accountDTO.setAccountHolderName(rs.getString("account_holder_name"));
-                    accountDTO.setAccountNumber(rs.getLong("account_number"));
+                    accountDTO.setAccountNumber(rs.getString("account_number"));
 
                     // Convert string to AccountType enum
                     String accountTypeString = rs.getString("account_type");
@@ -114,8 +126,27 @@ public class AccountDAOImpl implements AccountDAO {
                     bankDTO.setBankName(rs.getString("bank_name"));
                     bankDTO.setBranch(rs.getString("branch"));
                     bankDTO.setIfsc(rs.getString("ifsc_code"));
-
                     accountDTO.setBankDTO(bankDTO);
+
+                    User user = new User();
+                    user.setFirstName(rs.getString("first_name"));
+                    user.setLastName(rs.getString("last_name"));
+                    user.setEmail(rs.getString("email"));
+
+                    LocalDate dob = accountDAOHelper.getUserDOB(user.getId());
+                    if (dob == null) {
+                        throw new TransactionDateTimeNotFoundException("User DateOfBirth not found for Id: " + user.getId());
+                    }
+                    user.setDob(dob);
+                    user.setMobileNumber(rs.getString("mobile_number"));
+                    user.setPan(rs.getString("pan_card_number"));
+                    user.setAddress(rs.getString("address"));
+                    user.setPinCode(rs.getString("pin_code"));
+                    user.setState(rs.getString("state"));
+                    user.setCountry(rs.getString("country"));
+                    UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+                    accountDTO.setUserDTO(userDTO);
+
                     return accountDTO;
                 } else {
                     return null;
@@ -128,7 +159,7 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
-    public Long getSecurityPin(Long accountNumber) {
+    public Long getSecurityPin(String accountNumber) {
         return jdbcTemplate.query(AccountConstant.GET_ACCOUNT_SECURITY_PIN, new Object[]{accountNumber}, rs -> {
             AccountDTO accountDTO = new AccountDTO();
             try {

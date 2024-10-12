@@ -16,21 +16,21 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @PostMapping("/createAccount")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Map<String,Object> createAccounts(@RequestBody AccountDTO accountDTO) {
-       return accountService.createAccount(accountDTO);
-    }
+//    @PostMapping("/createAccount")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Map<String,Object> createAccounts(@RequestBody AccountDTO accountDTO) {
+//       return accountService.createAccount(accountDTO);
+//    }
 
     @GetMapping("/checkBalance")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<String,Object> getBalance(@RequestParam Long accountNumber, @RequestParam Long sPin) {
+    public Map<String,Object> getBalance(@RequestParam String accountNumber, @RequestParam Long sPin) {
         return accountService.getBalance(accountNumber,sPin);
     }
 
     @GetMapping("/getAccount")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<String,Object> getAccount(@RequestParam Long accountNumber, @RequestParam Long sPin) {
+    public Map<String,Object> getAccount(@RequestParam String accountNumber, @RequestParam Long sPin) {
         return accountService.getAccountDetail(accountNumber,sPin);
     }
 }

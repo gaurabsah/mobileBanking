@@ -82,7 +82,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (sPin == null) {
             throw new IllegalArgumentException("Security PIN cannot be null");
         }
-        Long accountNumber = transactionDAOHelper.getAccountNumberByTxnId(txnId);
+        String accountNumber = transactionDAOHelper.getAccountNumberByTxnId(txnId);
         if (accountNumber == null) {
             throw new ResourcesNotFoundException("Account Number not found");
         }
@@ -103,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Map<String, Object> getTransactionHistory(Long accountNumber, Long sPin) {
+    public Map<String, Object> getTransactionHistory(String accountNumber, Long sPin) {
         Map<String, Object> responseMap = new HashMap<>();
         List<TransactionDTO> transactionDTOList = new ArrayList<>();
 
