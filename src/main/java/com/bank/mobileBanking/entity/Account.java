@@ -13,7 +13,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "account_holder_name",nullable = false)
+    @Column(name = "account_holder_name", nullable = false)
     private String accountHolderName;
 
     @Column(name = "account_number")
@@ -26,7 +26,7 @@ public class Account {
     @Column(name = "bank_balance")
     private Double balance;
 
-    @Column(name = "security_pin",nullable = false)
+    @Column(name = "security_pin", nullable = false)
     private Long pin;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

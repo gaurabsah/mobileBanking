@@ -12,36 +12,36 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "first_name",nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name",nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email",nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password",nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "DOB",nullable = false)
+    @Column(name = "DOB", nullable = false)
     private LocalDate dob;
 
-    @Column(name = "mobile_number",nullable = false)
+    @Column(name = "mobile_number", nullable = false)
     private String mobileNumber;
 
-    @Column(name = "pan_card_number",nullable = false)
+    @Column(name = "pan_card_number", nullable = false)
     private String pan;
 
-    @Column(name = "address",nullable = false)
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "pin_code",nullable = false)
+    @Column(name = "pin_code", nullable = false)
     private String pinCode;
 
-    @Column(name = "state",nullable = false)
+    @Column(name = "state", nullable = false)
     private String state;
 
-    @Column(name = "country",nullable = false)
+    @Column(name = "country", nullable = false)
     private String country;
 }

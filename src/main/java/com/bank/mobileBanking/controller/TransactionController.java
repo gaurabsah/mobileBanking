@@ -18,4 +18,14 @@ public class TransactionController {
     public Map<String,Object> sendMoney(@RequestBody TransactionDTO transactionDTO, @RequestParam Long sPin){
         return transactionService.transferMoney(transactionDTO,sPin);
     }
+
+    @GetMapping("/getTxn")
+    public Map<String,Object> getTxn(@RequestParam String txnId, @RequestParam Long sPin){
+        return transactionService.getTransaction(txnId,sPin);
+    }
+
+    @GetMapping("/paymentHistory")
+    public Map<String,Object> paymentHistory(@RequestParam Long accountNumber, @RequestParam Long sPin){
+        return transactionService.getTransactionHistory(accountNumber,sPin);
+    }
 }

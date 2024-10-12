@@ -2,6 +2,9 @@ package com.bank.mobileBanking.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -23,4 +26,8 @@ public class Transaction {
 
     @Column(name = "receiver_account_number",nullable = false)
     private Long receiverAccountNumber;
+
+    @CreationTimestamp
+    @Column(name = "txn_date_time",nullable = false)
+    private LocalDateTime time;
 }

@@ -36,19 +36,19 @@ public class AccountDAOImpl implements AccountDAO {
         }
 
         String bankName = accountDTO.getBankDTO().getBankName();
-        log.info("Bank Name: {}",bankName);
+        log.info("Bank Name: {}", bankName);
 
         String bankIFSC = accountDTO.getBankDTO().getIfsc();
-        log.info("Bank IFSC Code: {}",bankIFSC);
+        log.info("Bank IFSC Code: {}", bankIFSC);
 
         // Check if the bank exists
-        BankDTO bankDTO = accountDAOHelper.getBankByNameAndIFSC(bankName,bankIFSC);
-        if (bankDTO==null) {
+        BankDTO bankDTO = accountDAOHelper.getBankByNameAndIFSC(bankName, bankIFSC);
+        if (bankDTO == null) {
             throw new ResourcesNotFoundException("Bank not found: " + bankName);
         }
 
         Integer bankId = jdbcTemplate.queryForObject(BankConstant.GET_BANK_ID, new Object[]{
-                bankName,bankIFSC
+                bankName, bankIFSC
         }, Integer.class);
 
         try {
@@ -58,7 +58,7 @@ public class AccountDAOImpl implements AccountDAO {
                     accountDTO.getBalance(),
                     accountDTO.getPin(),
                     bankId);
-            log.info("account detail: {}",accountDTO.toString());
+            log.info("account detail: {}", accountDTO.toString());
         } catch (Exception e) {
             log.error("Error creating account: {}", e.getMessage());
             throw new RuntimeException("Unable to create account", e);
@@ -78,8 +78,7 @@ public class AccountDAOImpl implements AccountDAO {
                     // Convert string to AccountType enum
                     String accountTypeString = rs.getString("account_type");
                     AccountType accountType = AccountType.valueOf(accountTypeString);
-                    accountDTO.setAccountType(accountType); // Assuming you have a setAccountType method in AccountDTO
-
+                    accountDTO.setAccountType(accountType);
 
                     account.setBalance(rs.getDouble("bank_balance"));
                     accountDTO = modelMapper.map(account, AccountDTO.class);
@@ -106,8 +105,7 @@ public class AccountDAOImpl implements AccountDAO {
                     // Convert string to AccountType enum
                     String accountTypeString = rs.getString("account_type");
                     AccountType accountType = AccountType.valueOf(accountTypeString);
-                    accountDTO.setAccountType(accountType); // Assuming you have a setAccountType method in AccountDTO
-
+                    accountDTO.setAccountType(accountType);
 
                     accountDTO.setBalance(rs.getDouble("bank_balance"));
                     accountDTO.setPin(rs.getLong("security_pin"));

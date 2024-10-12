@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +22,7 @@ public class AccountServiceImpl implements AccountService {
     public Map<String, Object> createAccount(AccountDTO accountDTO) {
         Map<String, Object> responseMap = new HashMap<>();
         accountDAO.createAccount(accountDTO);
-        responseMap.put("success","Account created successfully");
+        responseMap.put("success", "Account created successfully");
         return responseMap;
     }
 
@@ -31,11 +30,11 @@ public class AccountServiceImpl implements AccountService {
     public Map<String, Object> getBalance(Long accountNumber, Long sPin) {
         Map<String, Object> responseMap = new HashMap<>();
         Long securityPin = accountDAO.getSecurityPin(accountNumber);
-        if(!sPin.equals(securityPin)){
-            throw new WrongSecurityPinException("Wrong Security Pin"+securityPin);
+        if (!sPin.equals(securityPin)) {
+            throw new WrongSecurityPinException("Wrong Security Pin" + securityPin);
         }
         AccountDTO balance = accountDAO.getBalance(accountNumber);
-        responseMap.put("Bank account balance fetched successfully",balance);
+        responseMap.put("Bank account balance fetched successfully", balance);
         return responseMap;
     }
 
@@ -43,11 +42,11 @@ public class AccountServiceImpl implements AccountService {
     public Map<String, Object> getAccountDetail(Long accountNumber, Long sPin) {
         Map<String, Object> responseMap = new HashMap<>();
         Long securityPin = accountDAO.getSecurityPin(accountNumber);
-        if(!sPin.equals(securityPin)){
-            throw new WrongSecurityPinException("Wrong Security Pin"+securityPin);
+        if (!sPin.equals(securityPin)) {
+            throw new WrongSecurityPinException("Wrong Security Pin" + securityPin);
         }
         AccountDTO account = accountDAO.getAccount(accountNumber);
-        responseMap.put("account detail",account);
+        responseMap.put("account detail", account);
         return responseMap;
     }
 }

@@ -98,7 +98,7 @@ public class BankDAOImpl implements BankDAO {
 
     @Override
     public BankDTO getBankByNameAndIFSC(String bankName, String ifsc) {
-        return jdbcTemplate.query(BankConstant.GET_BANK_DETAIL_BY_NAME_AND_IFSC, new Object[]{bankName,ifsc}, rs -> {
+        return jdbcTemplate.query(BankConstant.GET_BANK_DETAIL_BY_NAME_AND_IFSC, new Object[]{bankName, ifsc}, rs -> {
             BankDTO bankDTO = new BankDTO();
             try {
                 if (rs.next()) {
