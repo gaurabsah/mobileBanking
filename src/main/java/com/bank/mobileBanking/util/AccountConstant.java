@@ -10,7 +10,7 @@ public class AccountConstant {
             "b.bank_name, b.branch, b.ifsc_code, " +
             "u.id, u.first_name, u.last_name, u.email, " +
             "u.mobile_number, u.pan_card_number, u.address, " +
-            "u.pin_code, u.state, u.country, u.id AS user_id " +
+            "u.pin_code, u.state, u.country, u.is_logged, u.id AS user_id " +
             "FROM account_tbl a " +
             "JOIN bank_tbl b ON a.bank_id = b.id " +
             "JOIN user_tbl u ON a.user_id = u.id " +

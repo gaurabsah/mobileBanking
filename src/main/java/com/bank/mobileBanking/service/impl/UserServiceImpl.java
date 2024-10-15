@@ -195,8 +195,6 @@ public class UserServiceImpl implements UserService {
         return identifier != null && identifier.contains("@");
     }
 
-//    TODO: isLogged --
-
     /*
     register(UserDTO userDTO)
     User to register to mobileBanking
@@ -234,7 +232,7 @@ public class UserServiceImpl implements UserService {
             throw new SomeThingWentWrongException("Invalid Mobile Number");
         }
 
-        // Password complexity check (example)
+        // Password complexity check
         if (userDTO.getPassword().length() < 8) {
             responseMap.put("error", "Password must be at least 8 characters long.");
             return responseMap;

@@ -15,6 +15,7 @@ import com.bank.mobileBanking.exception.ResourcesNotFoundException;
 import com.bank.mobileBanking.exception.SomeThingWentWrongException;
 import com.bank.mobileBanking.exception.TransactionDateTimeNotFoundException;
 import com.bank.mobileBanking.util.AccountConstant;
+import com.bank.mobileBanking.util.AccountUtil;
 import com.bank.mobileBanking.util.BankConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -208,7 +209,7 @@ public class AccountDAOImpl implements AccountDAO {
             throw new SomeThingWentWrongException("Please login...");
         }
 
-        String accountNumber = UUID.randomUUID().toString();
+        String accountNumber = AccountUtil.generateAccountNumber();
         String address = userDTO.getAddress();
 
         log.info("user {}",userDTO);

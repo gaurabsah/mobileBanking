@@ -126,4 +126,11 @@ public class TransactionServiceImpl implements TransactionService {
 
         return responseMap;
     }
+
+    @Override
+    public Map<String, Object> generateStatement(String accountNumber, String startDate, String endDate, String sPin) {
+        Map<String,Object> responseMap = new HashMap<>();
+
+        return null;
+    }
 }
