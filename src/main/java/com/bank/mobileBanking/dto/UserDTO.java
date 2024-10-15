@@ -14,11 +14,15 @@ import java.time.LocalDate;
 @Builder
 public class UserDTO {
 
+    private int id;
+
     private String firstName;
 
     private String lastName;
 
     private String email;
+
+    private String password;
 
     private LocalDate dob;
 
@@ -33,6 +37,8 @@ public class UserDTO {
     private String state;
 
     private String country;
+
+    private Boolean isLogged;
 
     private AccountDTO accountDTO;
 }

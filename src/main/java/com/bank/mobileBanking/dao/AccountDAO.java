@@ -11,7 +11,9 @@ public interface AccountDAO {
 
     AccountDTO getAccount(String accountNumber);
 
-    Long getSecurityPin(String accountNumber);
+    String getSecurityPin(String accountNumber);
 
     void updateAccountBalance(AccountDTO senderAccount);
+
+    boolean openAccount(String email, AccountDTO accountDTO);
 }

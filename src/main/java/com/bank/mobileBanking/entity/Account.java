@@ -24,7 +24,7 @@ public class Account {
     private Double balance;
 
     @Column(name = "security_pin", nullable = false)
-    private Long pin;
+    private String pin;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "bank_id", referencedColumnName = "id", nullable = false)

@@ -17,19 +17,19 @@ public class TransactionController {
 
     @PostMapping("/sendMoney")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String,Object> sendMoney(@RequestBody TransactionDTO transactionDTO, @RequestParam Long sPin){
+    public Map<String,Object> sendMoney(@RequestBody TransactionDTO transactionDTO, @RequestParam String sPin){
         return transactionService.transferMoney(transactionDTO,sPin);
     }
 
     @GetMapping("/getTxn")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<String,Object> getTxn(@RequestParam String txnId, @RequestParam Long sPin){
+    public Map<String,Object> getTxn(@RequestParam String txnId, @RequestParam String sPin){
         return transactionService.getTransaction(txnId,sPin);
     }
 
     @GetMapping("/paymentHistory")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<String,Object> paymentHistory(@RequestParam String accountNumber, @RequestParam Long sPin){
+    public Map<String,Object> paymentHistory(@RequestParam String accountNumber, @RequestParam String sPin){
         return transactionService.getTransactionHistory(accountNumber,sPin);
     }
 }

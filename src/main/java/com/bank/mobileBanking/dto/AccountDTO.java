@@ -18,7 +18,7 @@ public class AccountDTO {
 
     private Double balance;
 
-    private Long pin;
+    private String pin;
 
     private BankDTO bankDTO;
 

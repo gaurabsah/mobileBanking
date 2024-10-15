@@ -23,6 +23,9 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "password",nullable = false)
+    private String password;
+
     @Column(name = "DOB", nullable = false)
     private LocalDate dob;
 
@@ -43,6 +46,9 @@ public class User {
 
     @Column(name = "country", nullable = false)
     private String country;
+
+    @Column(name = "is_logged")
+    private Boolean isLogged;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private Account account;

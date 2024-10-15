@@ -31,12 +31,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public Map<String, Object> transferMoney(TransactionDTO transactionDTO, Long sPin) {
+    public Map<String, Object> transferMoney(TransactionDTO transactionDTO, String sPin) {
         Map<String, Object> responseMap = new HashMap<>();
         if (sPin == null) {
             throw new IllegalArgumentException("Security PIN cannot be null");
         }
-        Long securityPin = accountDAO.getSecurityPin(transactionDTO.getSenderAccountNumber());
+        String securityPin = accountDAO.getSecurityPin(transactionDTO.getSenderAccountNumber());
         if (!sPin.equals(securityPin)) {
             throw new WrongSecurityPinException("Wrong Security Pin");
         }
@@ -77,7 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Map<String, Object> getTransaction(String txnId, Long sPin) {
+    public Map<String, Object> getTransaction(String txnId, String sPin) {
         Map<String, Object> responseMap = new HashMap<>();
         if (sPin == null) {
             throw new IllegalArgumentException("Security PIN cannot be null");
@@ -87,7 +87,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResourcesNotFoundException("Account Number not found");
         }
 
-        Long securityPin = accountDAO.getSecurityPin(accountNumber);
+        String securityPin = accountDAO.getSecurityPin(accountNumber);
         if (!sPin.equals(securityPin)) {
             throw new WrongSecurityPinException("Wrong Security Pin");
         }
@@ -103,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Map<String, Object> getTransactionHistory(String accountNumber, Long sPin) {
+    public Map<String, Object> getTransactionHistory(String accountNumber, String sPin) {
         Map<String, Object> responseMap = new HashMap<>();
         List<TransactionDTO> transactionDTOList = new ArrayList<>();
 
@@ -115,7 +115,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResourcesNotFoundException("Account Number not found");
         }
 
-        Long securityPin = accountDAO.getSecurityPin(accountNumber);
+        String securityPin = accountDAO.getSecurityPin(accountNumber);
         if (!sPin.equals(securityPin)) {
             throw new WrongSecurityPinException("Wrong Security Pin");
         }

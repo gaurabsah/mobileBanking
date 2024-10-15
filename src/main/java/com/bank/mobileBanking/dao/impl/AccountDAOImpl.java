@@ -2,6 +2,7 @@ package com.bank.mobileBanking.dao.impl;
 
 import com.bank.mobileBanking.dao.AccountDAO;
 import com.bank.mobileBanking.dao.BankDAO;
+import com.bank.mobileBanking.dao.UserDAO;
 import com.bank.mobileBanking.dao.helper.AccountDAOHelper;
 import com.bank.mobileBanking.dto.AccountDTO;
 import com.bank.mobileBanking.dto.BankDTO;
@@ -11,6 +12,7 @@ import com.bank.mobileBanking.entity.Bank;
 import com.bank.mobileBanking.entity.User;
 import com.bank.mobileBanking.entity.enums.AccountType;
 import com.bank.mobileBanking.exception.ResourcesNotFoundException;
+import com.bank.mobileBanking.exception.SomeThingWentWrongException;
 import com.bank.mobileBanking.exception.TransactionDateTimeNotFoundException;
 import com.bank.mobileBanking.util.AccountConstant;
 import com.bank.mobileBanking.util.BankConstant;
@@ -36,6 +38,8 @@ public class AccountDAOImpl implements AccountDAO {
     private final AccountDAOHelper accountDAOHelper;
 
     private final BankDAO bankDAO;
+
+    private final UserDAO userDAO;
 
 
     @Override
@@ -66,7 +70,7 @@ public class AccountDAOImpl implements AccountDAO {
 
         try {
             log.info("insert");
-            jdbcTemplate.update(AccountConstant.INSERT_ACCOUNT_DETAIL,
+            jdbcTemplate.update(AccountConstant.OPEN_ACCOUNT,
                     accountNumber,
                     accountDTO.getAccountType().name(),
                     0.0,
@@ -120,7 +124,7 @@ public class AccountDAOImpl implements AccountDAO {
                     accountDTO.setAccountType(accountType);
 
                     accountDTO.setBalance(rs.getDouble("bank_balance"));
-                    accountDTO.setPin(rs.getLong("security_pin"));
+                    accountDTO.setPin(rs.getString("security_pin"));
 
                     BankDTO bankDTO = new BankDTO();
                     bankDTO.setBankName(rs.getString("bank_name"));
@@ -129,6 +133,7 @@ public class AccountDAOImpl implements AccountDAO {
                     accountDTO.setBankDTO(bankDTO);
 
                     User user = new User();
+                    user.setId(rs.getInt("id"));
                     user.setFirstName(rs.getString("first_name"));
                     user.setLastName(rs.getString("last_name"));
                     user.setEmail(rs.getString("email"));
@@ -144,6 +149,7 @@ public class AccountDAOImpl implements AccountDAO {
                     user.setPinCode(rs.getString("pin_code"));
                     user.setState(rs.getString("state"));
                     user.setCountry(rs.getString("country"));
+                    user.setIsLogged(rs.getBoolean("is_logged"));
                     UserDTO userDTO = modelMapper.map(user, UserDTO.class);
                     accountDTO.setUserDTO(userDTO);
 
@@ -159,13 +165,13 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
-    public Long getSecurityPin(String accountNumber) {
+    public String getSecurityPin(String accountNumber) {
         return jdbcTemplate.query(AccountConstant.GET_ACCOUNT_SECURITY_PIN, new Object[]{accountNumber}, rs -> {
             AccountDTO accountDTO = new AccountDTO();
             try {
                 if (rs.next()) {
                     Account account = new Account();
-                    account.setPin(rs.getLong("security_pin"));
+                    account.setPin(rs.getString("security_pin"));
                     accountDTO = modelMapper.map(account, AccountDTO.class);
                     return accountDTO.getPin();
                 } else {
@@ -181,6 +187,59 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public void updateAccountBalance(AccountDTO senderAccount) {
         jdbcTemplate.update(AccountConstant.UPDATE_ACCOUNT_BALANCE, senderAccount.getBalance(), senderAccount.getAccountNumber());
+    }
+
+    @Override
+    public boolean openAccount(String email, AccountDTO accountDTO) {
+        log.info("inside createAccount():");
+
+        if (email == null || email.isEmpty()) {
+            throw new ResourcesNotFoundException("email cannot be null.");
+        }
+
+        UserDTO userDTO = userDAO.getUser(email);
+
+        if (userDTO == null || (accountDTO.getPin() == null) || (accountDTO.getAccountType() == null)) {
+            throw new ResourcesNotFoundException("UserDTO and AccountDTO cannot be null.");
+        }
+
+        if (!userDTO.getIsLogged()){
+            log.info("Please login...");
+            throw new SomeThingWentWrongException("Please login...");
+        }
+
+        String accountNumber = UUID.randomUUID().toString();
+        String address = userDTO.getAddress();
+
+        log.info("user {}",userDTO);
+        // Fetch user ID and validate it
+        int userId = userDTO.getId();
+        if (userId == 0) {
+            log.error("User ID: {}", 0);
+            throw new ResourcesNotFoundException("Valid User ID is required.");
+        }
+
+        log.info("checking for bank info");
+        Bank bank = bankDAO.getBankByBranch(address);
+        log.info("bank info: {}", bank);
+        if (bank == null || bank.getId() == 0) {
+            throw new ResourcesNotFoundException("Valid Bank Detail Not Found for branch: " + userDTO.getAddress());
+        }
+
+        try {
+            log.info("insert");
+            int rowsAffected = jdbcTemplate.update(AccountConstant.OPEN_ACCOUNT,
+                    accountNumber,
+                    accountDTO.getAccountType().name(),
+                    0.0,
+                    accountDTO.getPin(),
+                    bank.getId(),
+                    userId);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            log.error("Error creating account: {}", e.getMessage());
+            throw new RuntimeException("Unable to create account", e);
+        }
     }
 
 }

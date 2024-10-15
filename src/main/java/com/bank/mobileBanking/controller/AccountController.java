@@ -24,13 +24,13 @@ public class AccountController {
 
     @GetMapping("/checkBalance")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<String,Object> getBalance(@RequestParam String accountNumber, @RequestParam Long sPin) {
+    public Map<String,Object> getBalance(@RequestParam String accountNumber, @RequestParam String sPin) {
         return accountService.getBalance(accountNumber,sPin);
     }
 
     @GetMapping("/getAccount")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<String,Object> getAccount(@RequestParam String accountNumber, @RequestParam Long sPin) {
+    public Map<String,Object> getAccount(@RequestParam String accountNumber, @RequestParam String sPin) {
         return accountService.getAccountDetail(accountNumber,sPin);
     }
 }
