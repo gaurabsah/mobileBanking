@@ -11,4 +11,6 @@ public interface TransactionDAO {
     TransactionDTO getTransaction(String txnId);
 
     List<TransactionDTO> txnHistory(String accountNumber);
+
+    List<TransactionDTO> getAllTransactions(String accountNumber, String startDate, String endDate);
 }

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -29,8 +29,8 @@ public class Transaction {
     private String receiverAccountNumber;
 
     @CreationTimestamp
-    @Column(name = "txn_date_time", nullable = false)
-    private LocalDateTime time;
+    @Column(name = "transaction_date", nullable = false)
+    private LocalDate time;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "service", nullable = false)

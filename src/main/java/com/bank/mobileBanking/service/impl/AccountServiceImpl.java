@@ -2,6 +2,9 @@ package com.bank.mobileBanking.service.impl;
 
 import com.bank.mobileBanking.dao.AccountDAO;
 import com.bank.mobileBanking.dto.AccountDTO;
+import com.bank.mobileBanking.dto.QrCodeDTO;
+import com.bank.mobileBanking.dto.UserDTO;
+import com.bank.mobileBanking.entity.User;
 import com.bank.mobileBanking.exception.ResourcesNotFoundException;
 import com.bank.mobileBanking.exception.WrongSecurityPinException;
 import com.bank.mobileBanking.service.AccountService;
@@ -81,10 +84,16 @@ public class AccountServiceImpl implements AccountService {
                 throw new WrongSecurityPinException("Wrong Security Pin");
             }
 
+            String firstName = account.getUserDTO().getFirstName();
+            String lastName = account.getUserDTO().getLastName();
+
+            String name = firstName + " " + lastName;
+
             bitMatrix = qrCodeWriter.encode(
-                    account.builder()
-                            .accountNumber(account.getAccountNumber())
-                            .accountType(account.getAccountType())
+                    QrCodeDTO.builder()
+                            .name(name)
+                            .accountNumber(accountNumber)
+                            .accountType(account.getAccountType().toString())
 //                            .balance(1000.0)
                             .build().toString(),
                     BarcodeFormat.QR_CODE, width, height, hintsMap);

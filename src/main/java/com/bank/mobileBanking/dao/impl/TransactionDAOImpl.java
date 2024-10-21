@@ -4,7 +4,6 @@ import com.bank.mobileBanking.dao.TransactionDAO;
 import com.bank.mobileBanking.dao.helper.TransactionDAOHelper;
 import com.bank.mobileBanking.dto.TransactionDTO;
 import com.bank.mobileBanking.entity.Transaction;
-import com.bank.mobileBanking.entity.enums.AccountType;
 import com.bank.mobileBanking.entity.enums.ServiceType;
 import com.bank.mobileBanking.exception.ResourcesNotFoundException;
 import com.bank.mobileBanking.exception.TransactionDateTimeNotFoundException;
@@ -16,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,9 +37,9 @@ public class TransactionDAOImpl implements TransactionDAO {
     public void transferMoney(TransactionDTO transactionDTO) {
         String transactionId = UUID.randomUUID().toString();
 
-        LocalDateTime transactionTime = transactionDTO.getTime();
+        LocalDate transactionTime = transactionDTO.getTime();
         if (transactionTime == null) {
-            transactionTime = LocalDateTime.now();
+            transactionTime = LocalDate.now();
         }
 
         Double gst = transactionDTO.getGst();
@@ -82,7 +81,7 @@ public class TransactionDAOImpl implements TransactionDAO {
                     transaction.setSenderAccountNumber(rs.getString("sender_account_number"));
                     transaction.setReceiverAccountNumber(rs.getString("receiver_account_number"));
 
-                    LocalDateTime time = transactionDAOHelper.getTransactionTime(txnId);
+                    LocalDate time = transactionDAOHelper.getTransactionTime(txnId);
                     if (time == null) {
                         throw new TransactionDateTimeNotFoundException("TXN Date not found");
                     }
@@ -122,7 +121,52 @@ public class TransactionDAOImpl implements TransactionDAO {
                     txn.setAmount(rs.getDouble("txn_amount"));
                     txn.setTxnId(rs.getString("txn_id"));
 
-                    LocalDateTime time = transactionDAOHelper.getTransactionTime(txn.getTxnId());
+                    LocalDate time = transactionDAOHelper.getTransactionTime(txn.getTxnId());
+                    if (time == null) {
+                        throw new TransactionDateTimeNotFoundException("TXN Date not found for txnId: " + txn.getTxnId());
+                    }
+                    txn.setTime(time);
+
+                    // Convert string to ServiceType enum
+                    String service = rs.getString("service");
+                    ServiceType serviceType = ServiceType.valueOf(service);
+                    txn.setService(serviceType);
+
+                    txn.setGst(rs.getDouble("gst"));
+                    txn.setCommission(rs.getDouble("commission"));
+
+                    transactionList.add(txn);
+                }
+            } catch (SQLException e) {
+                log.error("SQL error in getting transaction history: {}", e.getMessage());
+                throw new ResourcesNotFoundException("Error fetching transaction history");
+            } catch (Exception e) {
+                log.error("Error in getting transaction history: {}", e.getMessage());
+                throw new RuntimeException("Error processing transaction history", e);
+            }
+
+            return transactionList.stream()
+                    .map(s -> modelMapper.map(s, TransactionDTO.class))
+                    .collect(Collectors.toList());
+        });
+    }
+
+    @Override
+    public List<TransactionDTO> getAllTransactions(String accountNumber, String startDate, String endDate) {
+        LocalDate startDateLocal = LocalDate.parse(startDate);
+        LocalDate endDateLocal = LocalDate.parse(endDate);
+        return jdbcTemplate.query(TransactionConstant.GET_ALL_TXNS, new Object[]{accountNumber,startDateLocal,endDateLocal}, rs -> {
+            List<Transaction> transactionList = new ArrayList<>();
+
+            try {
+                while (rs.next()) {
+                    Transaction txn = new Transaction();
+                    txn.setReceiverAccountNumber(rs.getString("receiver_account_number"));
+                    txn.setSenderAccountNumber(rs.getString("sender_account_number"));
+                    txn.setAmount(rs.getDouble("txn_amount"));
+                    txn.setTxnId(rs.getString("txn_id"));
+
+                    LocalDate time = transactionDAOHelper.getTransactionTime(txn.getTxnId());
                     if (time == null) {
                         throw new TransactionDateTimeNotFoundException("TXN Date not found for txnId: " + txn.getTxnId());
                     }

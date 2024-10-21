@@ -10,4 +10,10 @@ public class TransactionConstant {
 
     public static final String GET_ALL_TXN_DETAILS = "SELECT * from txn_tbl where sender_account_number = ? " +
             "ORDER BY txn_date_time DESC";
+
+    public static final String GET_ALL_TXNS = "SELECT *\n" +
+            "FROM txn_tbl\n" +
+            "WHERE sender_account_number = ?\n" +
+            "AND transaction_date BETWEEN ? AND ?\n" +
+            "ORDER BY transaction_date DESC";
 }

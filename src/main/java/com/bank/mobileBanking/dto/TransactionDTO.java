@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,11 +23,14 @@ public class TransactionDTO {
 
     private String receiverAccountNumber;
 
-    private LocalDateTime time;
+    private LocalDate time;
 
     private ServiceType service;
 
     private Double gst;
 
     private Double commission;
+
+    public TransactionDTO(List<TransactionDTO> transactions) {
+    }
 }
